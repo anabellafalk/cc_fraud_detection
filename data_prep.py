@@ -115,14 +115,18 @@ def extract_distance(dat):
 
 
 ### Encode Categorical Variables
+def fit_col_encoder(dat, col):
+    encoder = OneHotEncoder(sparse=False)
+    encoder.fit(dat[col].values.reshape(-1,1))
+    return encoder
+
 """
 One Hot Encodes the categorical variable `col` in `dat`. 
 Returns a dataframe of the encoded categories. Each column name begins with 
 `col` followed by the category name after a '.'
 """
-def encode_col(dat, col):
-    encoder = OneHotEncoder(sparse=False)
-    encoded = pd.DataFrame(encoder.fit_transform(dat[col].values.reshape(-1,1)))
+def encode_col(dat, col, encoder):
+    encoded = pd.DataFrame(encoder.transform(dat[col].values.reshape(-1,1)))
     encoded.columns = col + "." + encoder.categories_[0]
     return encoded
 
