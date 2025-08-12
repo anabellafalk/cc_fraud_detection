@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 
 from sklearn.cluster import KMeans
+from sklearn.preprocessing import OneHotEncoder
 
 ### Load and Split Data
 """
@@ -111,3 +112,17 @@ distance from the owner's address to the merchant.
 """
 def extract_distance(dat):
     dat['distance'] = np.sqrt((dat['merch_lat'] - dat['lat'])**2 + (dat['merch_long'] - dat['long'])**2)
+
+
+### Encode Categorical Variables
+"""
+One Hot Encodes the categorical variable `col` in `dat`. 
+Returns a dataframe of the encoded categories. Each column name begins with 
+`col` followed by the category name after a '.'
+"""
+def encode_col(dat, col, encoded):
+    encoder = OneHotEncoder(sparse=False)
+    encoded = pd.DataFrame(encoder.fit_transform(dat[col].values.reshape(-1,1)))
+    encoded.columns = col + "." + encoder.categories_[0]
+    return encoded
+
