@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 from sklearn.cluster import KMeans
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 ### Load and Split Data
 """
@@ -88,20 +88,22 @@ def extract_age(dat):
 ### Bin Jobs
 """
 FIt KMeans with 3 clusters to the 'job' column to get bins. 
-Returns mapping for bins
+Returns fitted cluster to create mappings
 """
 def fit_job_bins(dat):
     cluster = KMeans(3)
     fraud_job = dat.groupby('job')['is_fraud'].mean()
-    job_bin = pd.Series(cluster.fit_predict(fraud_job.values.reshape(-1,1)))
-    job_bin.index = fraud_job.index
-    return job_bin
+    cluster.fit(fraud_job.values.reshape(-1,1))
+    return cluster
 
 """
 Modifies dataframe `dat` adding the binned column 'job_bin' for the column 'job'
-using `bin_map` as binning mapping
+using fitted `cluster` to create binning mapping
 """
-def bin_jobs(dat, bin_map):
+def bin_jobs(dat, cluster):
+    fraud_job = dat.groupby('job')['is_fraud'].mean()
+    bin_map = pd.Series(cluster.predict(fraud_job.values.reshape(-1,1)))
+    bin_map.index = fraud_job.index
     dat['job_bin'] = dat['job'].apply(lambda x: bin_map.loc[x])
 
 
@@ -114,7 +116,28 @@ def extract_distance(dat):
     dat['distance'] = np.sqrt((dat['merch_lat'] - dat['lat'])**2 + (dat['merch_long'] - dat['long'])**2)
 
 
+### Scale Numeric Variables
+"""
+Fit standard scaler to numeric column
+Returns scaler
+"""
+def fit_col_scaler(dat, col):
+    scaler = StandardScaler()
+    scaler.fit(dat[col].values.reshape(-1,1))
+    return scaler
+
+"""
+Modifies dataframe `dat` creating the new column '`col`_scale' containing the 
+standard scaled version of the values in `col`
+"""
+def scale_col(dat, col, scaler):
+    dat[col + '_scale'] = scaler.transform(dat[col].values.reshape(-1,1))
+
 ### Encode Categorical Variables
+"""
+Fit OneHotEncoder to categorical column
+Returns encoder
+"""
 def fit_col_encoder(dat, col):
     encoder = OneHotEncoder(sparse=False)
     encoder.fit(dat[col].values.reshape(-1,1))
