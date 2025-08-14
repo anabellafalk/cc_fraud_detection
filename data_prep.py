@@ -135,9 +135,33 @@ def scale_col(dat, col, scaler):
 
 
 ### Bin Numeric Variables
+"""
+Modifies dataframe `dat` creating the new column 'age_bin' containing the 
+quantile bin of age.
+Returns the intervals for the fitted bins
+"""
 def fit_age_bins(dat):
-    dat['age_bins'] = pd.qcut(dat['age_at_trans'].values, 7)
-    return dat['age_bins'].unique()
+    dat['age_bin'] = pd.qcut(dat['age_at_trans'].values, 7)
+
+    lst = []
+    for x in dat['age_bin'].unique():
+        lst = lst + [x]
+    lst.sort()
+
+    return lst
+
+"""
+Modifies dataframe `dat` creating the new column 'age_bin' which bins the ages
+based on `age_bins`
+"""
+def bin_age(dat, age_bins):
+    bins = []
+    for x in age_bins:
+        bins = bins + [x.left]
+    bins.append(age_bins[len(age_bins)-1].right)
+    
+    dat['age_bin'] = pd.cut(dat['age_at_trans'].clip(bins[0], bins[len(bins)-1]), bins=bins)
+
 
 ### Encode Categorical Variables
 """
