@@ -133,6 +133,12 @@ standard scaled version of the values in `col`
 def scale_col(dat, col, scaler):
     dat[col + '_scale'] = scaler.transform(dat[col].values.reshape(-1,1))
 
+
+### Bin Numeric Variables
+def fit_age_bins(dat):
+    dat['age_bins'] = pd.qcut(dat['age_at_trans'].values, 7)
+    return dat['age_bins'].unique()
+
 ### Encode Categorical Variables
 """
 Fit OneHotEncoder to categorical column
