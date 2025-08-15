@@ -136,8 +136,8 @@ def scale_col(dat, col, scaler):
 
 ### Bin Numeric Variables
 """
-Modifies dataframe `dat` creating the new column 'age_bin' containing the 
-quantile bin of age.
+Modifies dataframe `dat` creating the new column 'age_bin' containing the 7
+quantile bins of age.
 Returns the intervals for the fitted bins
 """
 def fit_age_bins(dat):
@@ -151,16 +151,34 @@ def fit_age_bins(dat):
     return lst
 
 """
-Modifies dataframe `dat` creating the new column 'age_bin' which bins the ages
-based on `age_bins`
+Modifies dataframe `dat` creating the new column 'distance_bin' containing the 5
+quantile bins of distance.
+Returns the intervals for the fitted bins
 """
-def bin_age(dat, age_bins):
+def fit_dist_bins(dat):
+    dat['distance_bin'] = pd.qcut(dat['distance'].values, 7)
+
+    lst = []
+    for x in dat['distance_bin'].unique():
+        lst = lst + [x]
+    lst.sort()
+
+    return lst
+
+"""
+Modifies dataframe `dat` creating the new column '`col`_bin' which bins `col`
+based on `col_bins`
+"""
+def bin_col(dat, col, col_bins):
     bins = []
-    for x in age_bins:
+    for x in col_bins:
         bins = bins + [x.left]
-    bins.append(age_bins[len(age_bins)-1].right)
+    bins.append(col_bins[len(col_bins)-1].right)
     
-    dat['age_bin'] = pd.cut(dat['age_at_trans'].clip(bins[0], bins[len(bins)-1]), bins=bins)
+    if col == 'age_at_trans':
+        dat['age_bin'] = pd.cut(dat[col].clip(bins[0], bins[len(bins)-1]), bins=bins)
+    else:
+        dat[col + '_bin'] = pd.cut(dat[col].clip(bins[0], bins[len(bins)-1]), bins=bins)
 
 
 ### Encode Categorical Variables
