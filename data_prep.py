@@ -156,10 +156,26 @@ quantile bins of distance.
 Returns the intervals for the fitted bins
 """
 def fit_dist_bins(dat):
-    dat['distance_bin'] = pd.qcut(dat['distance'].values, 7)
+    dat['distance_bin'] = pd.qcut(dat['distance'].values, 7, precision = 2)
 
     lst = []
     for x in dat['distance_bin'].unique():
+        lst = lst + [x]
+    lst.sort()
+
+    return lst
+
+
+"""
+Modifies dataframe `dat` creating the new column 'distance_bin' containing the 5
+quantile bins of distance.
+Returns the intervals for the fitted bins
+"""
+def fit_city_pop_bins(dat):
+    dat['city_pop_bin'] = pd.qcut(dat['city_pop'].values, 5)
+
+    lst = []
+    for x in dat['city_pop_bin'].unique():
         lst = lst + [x]
     lst.sort()
 
@@ -176,9 +192,9 @@ def bin_col(dat, col, col_bins):
     bins.append(col_bins[len(col_bins)-1].right)
     
     if col == 'age_at_trans':
-        dat['age_bin'] = pd.cut(dat[col].clip(bins[0], bins[len(bins)-1]), bins=bins)
+        dat['age_bin'] = pd.cut(dat[col].clip(bins[1], bins[len(bins)-1]), bins=bins)
     else:
-        dat[col + '_bin'] = pd.cut(dat[col].clip(bins[0], bins[len(bins)-1]), bins=bins)
+        dat[col + '_bin'] = pd.cut(dat[col].clip(bins[1], bins[len(bins)-1]), bins=bins)
 
 
 ### Encode Categorical Variables
