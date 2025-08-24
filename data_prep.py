@@ -24,6 +24,23 @@ def load_train():
     return dat
 
 """
+Load testing data from kaggle. 
+Returns pandas df with "Unnamed: 0" column dropped.
+"""
+def load_test():
+    # Download latest version
+    path = kagglehub.dataset_download("kartik2112/fraud-detection")
+
+    print("Path to dataset files:", path)
+
+    file = "/fraudTest.csv"
+    dat = pd.read_csv(path + file)
+
+    dat = dat.drop('Unnamed: 0', axis = 1)
+
+    return dat
+
+"""
 Split data into training and testing based on observed split.
 Appx 25% validation and 75% training.
 Returns two pandas df each of training and validation data.
