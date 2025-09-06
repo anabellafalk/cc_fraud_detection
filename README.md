@@ -1,6 +1,6 @@
 # cc_fraud_detection
 
-Explored the Credit Card Transactions Fraud Detection Dataset from Kaggle and trained different classification models to predict credit card fraud.
+Explored the Credit Card Transactions Fraud Detection Dataset from Kaggle and trained different classification models to detect credit card fraud.
 
 **Content:** Jupyter Notebooks depicting each step of the modeling process: EDA, data preparation, model fitting, model evaluation, and model deployment.
 
